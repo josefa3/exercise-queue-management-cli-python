@@ -19,20 +19,39 @@ def add():
     name = input("Escriba su nombre: \n") 
     numb = int(input("Escriba su numero: \n"))
     cliente = {
-        "name": nombre,
-        "numb": numero,
+        "name": name,
+        "numb": numb,
     }
     print(f"Hola {name}, tienes {queue.enqueue(cliente)} persona/s por delante")
 
 def dequeue():
-    print(f"{queue.get_queue()[0]["name"]}, su orden ha sido entregada")
-    queue.dequeue(cliente)
+    entrega = queue.get_queue()[0]["name"]
+    print(f"{entrega}, su orden ha sido entregada")
+    name_to_delete=queue.get_queue()[0]["name"]
+    send("Su pedido está listo, " + entrega.upper(), queue.get_queue()[0]["numb"])
+    queue.dequeue()
 
 def save():
-    pass
+    def write_json(data, filename='queue.json'): ## creo la función write_json, sus parámetros son: una variable y el nombre del archivo a crear
+        with open(filename,'w') as jsonFile: ## función open, le paso el nombre del archivo y writer(w), como un nombre del archivo
+            json.dump(data, jsonFile, indent=2) ## dump transforma lo que le pasamos a strings, le pasamos la variable
+            ## el archivo que la va a contener y indent= coloca saltos de linea 
+    with open('queue.json') as json_file: 
+        data = json.load(json_file) 
+    write_json(queue.get_queue())  
 
 def load():
-    pass 
+    #import json #must be avalaible
+    # Opening JSON file 
+    f = open('queue.json',) ### a esta función de python se le pasan dos parámetros, el nombre del archivo y el modo de lectura
+    # returns JSON object as a dictionary 
+    data = json.load(f) ## meto en la variable que cree, data, el archivo que se abre en 45
+    queue.get_queue().clear() ### limpio el dic
+    for index in data:
+        queue.get_queue().append({"name":index["name"],"numb":index["numb"]}) ## le agrego las claves y las keys al dic
+    print(queue.get_queue())    
+    # Closing file 
+    f.close() 
         
     
 print("\nHello, this is the Command Line Interface for a Queue Managment application.")
@@ -53,7 +72,6 @@ What would you like to do (type a number and press Enter)?
     # add your options here using conditionals (if)
     if option == 1:
         add()
-        print("Cliente agregado...")
     elif option == 2:
         dequeue()
     elif option == 3:
